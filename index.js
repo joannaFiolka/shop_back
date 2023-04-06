@@ -4,6 +4,7 @@ import * as dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import {userRouter} from "./routes/user.router.js";
 
 const app = express();
 
@@ -21,6 +22,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({origin: 'http://localhost:3000',}));
+
+
+app.use('/users', userRouter)
 
 app.use(rateLimit({
     windowMs: 5 * 60 * 1000,
