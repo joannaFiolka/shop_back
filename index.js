@@ -30,7 +30,18 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use(cors({origin: 'http://localhost:3000',}));
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', ['http://localhost:3000', "https://server-front-43pf.vercel.app"]);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
+
+app.use(cors({origin: [
+    'http://localhost:3000',
+    'https://server-front-43pf.vercel.app'
+    ]}));
 
 app.use(rateLimit({
     windowMs: 5 * 60 * 1000, // 15 minutes
