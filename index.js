@@ -12,7 +12,6 @@ import {cartRouter} from "./routes/cart.router.js";
 
 const app = express();
 
-
 dotenv.config()
 mongoose
     .connect(process.env.MONGO)
@@ -21,9 +20,15 @@ mongoose
         console.log(err);
     })
 
-dotenv.config()
 app.use(express.json());
 app.use(cookieParser());
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', ['http://localhost:3000', "https://server-front-43pf.vercel.app"]);
@@ -38,17 +43,16 @@ app.use(cors({origin: [
     'https://server-front-43pf.vercel.app'
     ]}));
 
+app.use(rateLimit({
+    windowMs: 5 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+}));
 
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
 app.use('/products', productRouter)
 app.use('/carts', cartRouter)
 app.use('/orders ', orderRouter)
-
-app.use(rateLimit({
-    windowMs: 5 * 60 * 1000,
-    max: 100,
-}));
 
 app.listen(process.env.PORT || 3002, '0.0.0.0', () => {
     console.log('Connected to backend http://localhost:3002')
